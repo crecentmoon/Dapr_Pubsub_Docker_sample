@@ -1,0 +1,30 @@
+version: '3'
+services:
+  ############################
+  # Go publish app + Dapr sidecar
+  ############################
+  pub:
+    container_name: dapr_pubsub_docker_sample_gopub
+    build: ./pub
+    networks:
+      - hello-dapr
+  pub-dapr:
+    image: "daprio/daprd:edge"
+    container_name: dapr_pubsub_docker_sample_gopub-sidecar
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "pub",
+        "--log-level",
+        "debug",
+        "--components-path",
+        "./components"
+      ]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - pub
+    network_mode: "service:pub"
+networks:
+  hello-dapr:

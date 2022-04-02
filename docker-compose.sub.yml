@@ -1,0 +1,38 @@
+version: '3'
+services:
+  ############################
+  # Go subscribe app + Dapr sidecar
+  ############################
+  sub:
+    container_name: dapr_pubsub_docker_sample_gosub
+    build: ./sub
+    ports:
+      - "50002:50002"
+    networks:
+      - hello-dapr
+  sub-dapr:
+    image: "daprio/daprd:edge"
+    container_name: dapr_pubsub_docker_sample_gosub-sidecar
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "sub",
+        "--app-protocol",
+        "http",
+        "--app-port",
+        "8080",
+        "--dapr-http-port",
+        "3500",
+        --log-level,
+        "debug",
+        --components-path,
+        "./components",
+      ]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - sub
+    network_mode: "service:sub"
+networks:
+  hello-dapr:

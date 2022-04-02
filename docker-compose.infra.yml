@@ -1,0 +1,25 @@
+version: '3'
+services:
+  ############################
+  # Dapr placement service
+  ############################
+  placement:
+    image: "daprio/dapr"
+    container_name: dapr_pubsub_docker_sample_placement
+    command: [ "./placement", "-port", "50006" ]
+    ports:
+      - "50006:50006"
+    networks:
+      - hello-dapr
+  ############################
+  # Redis state store
+  ############################
+  redis:
+    image: "redis:alpine"
+    container_name: dapr_pubsub_docker_sample_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - hello-dapr
+networks:
+  hello-dapr:
